@@ -1,0 +1,12 @@
+### Получение токена
+POST http://localhost:8003/auth/token
+Content-Type: application/x-www-form-urlencoded
+
+username=adminsk
+&password=adminsnk
+
+###
+
+### Проверка user-id по токену
+GET http://localhost:8003/auth/internal/user-id
+Authorization: Bearer {{eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbnNrIiwiZXhwIjoxNzQ0NzQ5MDM3fQ.NfOyBMETOiGcS-SRZBC32YV8sEyLhPG09vU5V-yqhJM}}

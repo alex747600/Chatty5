@@ -1,0 +1,80 @@
+worker_processes 1;
+
+events {
+    worker_connections 1024;
+}
+
+http {
+    include       mime.types;
+    default_type  application/json;
+
+    sendfile        on;
+    keepalive_timeout  65;
+
+    upstream auth_service {
+        server auth_service:8003;
+    }
+
+    upstream post_service {
+        server post_service:8006;
+    }
+
+    upstream subscription_service {
+        server subscription_service:8007;
+    }
+
+    upstream admin_service {
+        server admin_service:8009;
+    }
+
+    upstream minio_console {
+        server minio:9001;
+    }
+
+    server {
+        listen 80;
+
+        # AUTH
+        location /auth/ {
+            proxy_pass http://auth_service;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+
+        # POST
+        location /posts/ {
+            proxy_pass http://post_service;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+
+        # SUBSCRIPTIONS
+        location /subscriptions/ {
+            proxy_pass http://subscription_service;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+
+        # ADMIN
+        location /admin/ {
+            proxy_pass http://admin_service;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+        }
+
+        # MINIO CONSOLE (UI)
+        location /minio/ {
+            proxy_pass http://minio_console;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            rewrite ^/minio/(.*)$ /$1 break;
+        }
+
+        # Fallback 404
+        location / {
+            return 404;
+        }
+    }
+}
+
+
