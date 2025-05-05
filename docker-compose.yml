@@ -45,6 +45,10 @@ services:
     environment:
       DB_HOST: auth_db
       DB_PORT: 5432
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+    env_file:
+      - .env  # подключает переменные из файла .env
     volumes:
       - ./auth_service:/app
     depends_on:
@@ -53,12 +57,13 @@ services:
       rabbitmq:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8003/"]  # Проверяем маршрут /
+      test: ["CMD", "curl", "-f", "http://localhost:8003/"]
       interval: 10s
       timeout: 3s
       retries: 5
     networks:
       - app-network
+
 
   auth_db:
     image: postgres:15.3
@@ -86,6 +91,8 @@ services:
     container_name: post_service
     ports:
       - "8006:8006"
+    env_file:
+      - .env
     environment:
       DB_HOST: post_db
       DB_PORT: 5432
@@ -130,6 +137,8 @@ services:
     container_name: subscription_service
     ports:
       - "8007:8007"
+    env_file:
+      - .env
     environment:
       DB_HOST: subscription_db
       DB_PORT: 5432
@@ -183,6 +192,8 @@ services:
     container_name: admin_service
     ports:
       - "8009:8009"
+    env_file:
+      - .env
     environment:
       DB_HOST: admin_db
       DB_PORT: 5432
@@ -229,15 +240,12 @@ services:
       - app-network
 
   nginx:
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile
+    image: nginx:latest
     container_name: nginx
     ports:
       - "80:80"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/docker-entrypoint.sh:/docker-entrypoint.sh:ro
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
     depends_on:
       auth_service:
         condition: service_healthy
@@ -247,15 +255,15 @@ services:
         condition: service_healthy
       admin_service:
         condition: service_healthy
-    entrypoint: ["/docker-entrypoint.sh"]
-    command: ["nginx", "-g", "daemon off;"]
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost"]
+      # Лучше указать реальный путь, который точно существует
+      test: ["CMD", "curl", "-f", "http://localhost/auth/health"]
       interval: 10s
       timeout: 3s
       retries: 5
     networks:
       - app-network
+
 
 volumes:
   auth_db_data:

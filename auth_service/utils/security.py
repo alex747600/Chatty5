@@ -1,4 +1,3 @@
-
 import os
 from dotenv import load_dotenv
 from fastapi import Depends, HTTPException, status
@@ -14,8 +13,8 @@ from database import get_db
 import smtplib
 from email.mime.text import MIMEText
 
-# Загружаем .env.local
-load_dotenv(dotenv_path="/app/.env.local")
+# Загружаем переменные окружения из .env, если он есть
+load_dotenv()  # ❗️ убрали конкретный путь /app/.env, чтобы не было ошибки в Docker
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
@@ -34,7 +33,7 @@ SMTP_PASSWORD = os.getenv("SMTP_PASSWORD")
 
 # Проверка наличия SMTP-учетных данных
 if not SMTP_USER or not SMTP_PASSWORD:
-    raise ValueError("SMTP_USER и SMTP_PASSWORD должны быть заданы в .env.local")
+    raise ValueError("SMTP_USER и SMTP_PASSWORD должны быть заданы в .env")
 
 def get_password_hash(password: str) -> str:
     return pwd_context.hash(password)

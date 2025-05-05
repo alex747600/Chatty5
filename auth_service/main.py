@@ -31,3 +31,7 @@ async def read_root(db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(models.User))
     users = result.scalars().all()
     return users
+
+@app.get("/auth/health")
+async def health_check():
+    return {"status": "ok"}
