@@ -14,7 +14,7 @@ import smtplib
 from email.mime.text import MIMEText
 
 # Загружаем переменные окружения из .env, если он есть
-load_dotenv()  # ❗️ убрали конкретный путь /app/.env, чтобы не было ошибки в Docker
+load_dotenv(dotenv_path="/app/.env.local")  # ❗️ убрали конкретный путь /app/.env, чтобы не было ошибки в Docker
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/token")
 
