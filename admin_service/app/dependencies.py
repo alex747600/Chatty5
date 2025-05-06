@@ -12,7 +12,7 @@ class TokenData(BaseModel):
 
 def get_current_admin(token: str = Depends(oauth2_scheme)):
     try:
-        payload = jwt.decode(token, os.getenv("JWT_SECRET", "your-secret-key"), algorithms=["HS256"])
+        payload = jwt.decode(token, os.getenv("JWT_SECRET", "your_very_secure_random_key_32_chars_long"), algorithms=["HS256"])
         user_id: int = payload.get("sub")
         role: int = payload.get("role")
         if user_id is None or role is None:

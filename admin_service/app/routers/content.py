@@ -11,7 +11,7 @@ from datetime import datetime
 
 router = APIRouter(prefix="/admin", tags=["Content Moderation"])
 
-POST_SERVICE_URL = os.getenv("POST_SERVICE_URL", "http://post_service:8003")
+POST_SERVICE_URL = os.getenv("POST_SERVICE_URL", "http://post_service:8006")
 
 @router.get("/reports", response_model=ReportList)
 async def list_reports(token: TokenData = Depends(get_current_admin)):
