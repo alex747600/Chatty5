@@ -11,7 +11,7 @@ from datetime import datetime
 
 router = APIRouter(prefix="/admin", tags=["User Activity"])
 
-POST_SERVICE_URL = os.getenv("POST_SERVICE_URL", "http://post_service:8003")
+POST_SERVICE_URL = os.getenv("POST_SERVICE_URL", "http://post_service:8006")
 
 @router.get("/activity", response_model=UserActivityStats)
 async def get_user_activity(token: TokenData = Depends(get_current_admin), db: Session = Depends(get_db)):
